@@ -1,0 +1,29 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    {% load static %}
+
+    <meta charset="utf-8">
+
+    <title>{% block title %} {% endblock %}</title>
+
+    <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon-32x32.png' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <script src="{% static 'js/jquery-3.5.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    {% block extrahead %} {% endblock %}
+    <script src="{% static 'js/script.js' %}"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-light bg-light">
+        <a class="navbar-brand" href="https://www.adlershof.de/" target="_blank">
+            <img src="{% static 'img/logo_adlershof.png' %}" width="" height="50" alt="Logo Adlershof WISTA GmbH">
+        </a>
+        <h2>{% block h2 %} {% endblock %}</h2>
+    </nav>
+    {% block content %} {% endblock %}
+</body>

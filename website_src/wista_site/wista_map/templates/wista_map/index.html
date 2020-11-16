@@ -1,0 +1,91 @@
+{% extends "wista_map/base.html" %} {% block title %} WISTA traffic data maps {{ block.super }} {% endblock %} {% block extrahead %} {{ block.super }}
+<script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' /> {% endblock %} {% load static %} {% block h2 %} {{ block.super }} WISTA Traffic Data Source Map {% endblock %} {% block content %}
+<div class="wista_map">
+    <div class="side_content">
+        <div class="info_card">
+            <p>placeholder</p>
+            <img src="{% static 'img/sample_graph.png' %}" height="130">
+        </div>
+        <div class="info_card">
+            <p>placeholder</p>
+        </div>
+    </div>
+    <div id='map'></div>
+</div>
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoieWh0dyIsImEiOiJja2d1czVtZW8wb2NyMnJwMGVoZGV0emJ3In0.q-l0HYixdsbiq1um72GnSw';
+    var bounds = [
+        [13.494264740126056, 52.42152694324699], // Southwest coordinates
+        [13.560171467006654, 52.44998581080799] // Northeast coordinates
+    ];
+
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/yhtw/ckguuj9sm07x519lhvo9dkc2m',
+        maxBounds: bounds,
+        zoom: 10,
+    });
+
+    var popup = new mapboxgl.Popup({
+        closeOnClick: false,
+        offset: [0, -15],
+        closeButton: false,
+        maxWidth: '300px'
+    })
+
+    map.addControl(new mapboxgl.NavigationControl());
+
+    const dlr_logo = "{% static 'img/dlr_logo.png' %}";
+    const lkargus_logo = "{% static 'img/lka_logo.jpg' %}";
+
+    map.on('mousemove', 'erfassungspunkte', function(e) {
+        var features = map.queryRenderedFeatures(e.point, {
+            layers: ['erfassungspunkte'] // replace this with the name of the layer
+        });
+
+        map.getCanvas().style.cursor = 'default';
+
+        if (!features.length) {
+            return;
+        }
+
+        var feature = features[0];
+
+        var logo = "";
+        if (feature.properties.source == "DLR") {
+            logo = dlr_logo;
+        } else if (feature.properties.source == "LK Argus") {
+            logo = lkargus_logo;
+        } else {
+            logo = "";
+        }
+
+        popup
+            .setLngLat(feature.geometry.coordinates)
+            .setHTML('<div class="info-box "><img id="infobox_logo " src="' + logo + '" ><h4>' + feature.properties.name + '</h4><p>Art der Erhebung: ' + feature.properties.type + '</p><p>Zählstelle: ' + feature.properties.measuring_point + '</p><p>Datum: ' + feature.properties.date + '</p><p>Zeitraum: ' + feature.properties.timerange + '</p><p>Quelle: ' + feature.properties.source + '</p></div>')
+            .addTo(map);
+    });
+
+    map.on('mouseleave', 'erfassungspunkte', function() {
+        map.getCanvas().style.cursor = '';
+        popup.remove();
+    });
+</script>
+
+{% endblock %}
+
+<script>
+    // $.ajax({
+    //     method: 'GET',
+    //     url: '',
+    //     success: function(data) {
+    //         console.log(data)
+    //     },
+    //     error: function(error_data) {
+    //         console.log("error: " + error_data)
+    //     }
+    // });
+</script>
+
+</html>
